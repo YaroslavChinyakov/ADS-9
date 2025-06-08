@@ -1,6 +1,9 @@
 // Copyright 2022 NNTU-CS
 #include "tree.h"
 #include <stdexcept>
+#include <cstdint>    
+#include <vector>
+#include <algorithm>
 
 static void buildAll(const std::vector<char>& available,
     std::vector<char>& path,
@@ -37,15 +40,17 @@ std::vector<PMTree::Elem> getPerm1(const PMTree& tree, int num) {
 std::vector<PMTree::Elem> getPerm2(const PMTree& tree, int num) {
     const auto& A = tree.getAlphabet();
     int n = static_cast<int>(A.size());
-    long long fact = 1;
+    int64_t fact = 1;
     for (int i = 2; i <= n; ++i) fact *= i;
     if (num < 1 || num > fact) {
         return {};
     }
-    --num;
+    --num;  
+
     std::vector<char> available = A;
     std::vector<char> result;
     result.reserve(n);
+
     for (int k = n; k >= 1; --k) {
         fact /= k;
         int idx = num / fact;

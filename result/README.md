@@ -1,1 +1,2 @@
-![plot png](https://github.com/user-attachments/assets/13918958-7a29-4de2-a18d-f9f043912226)
+![plot](https://github.com/user-attachments/assets/3ca584ba-9257-4ac0-b04d-2641ed3a4b0b)
+

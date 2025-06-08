@@ -1,9 +1,9 @@
 // Copyright 2022 NNTU-CS
-#include "tree.h"
-
 #include <cstdint>
 #include <vector>
 #include <algorithm>
+
+#include "tree.h"
 
 static void buildAll(const std::vector<char>& available,
     std::vector<char>& path,
@@ -62,3 +62,4 @@ std::vector<PMTree::Elem> getPerm2(const PMTree& tree, int num) {
     }
     return result;
 }
+

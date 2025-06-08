@@ -6,7 +6,7 @@
 #include <algorithm>
 
 class PMTree {
-public:
+ public:
     using Elem = char;
 
     explicit PMTree(const std::vector<Elem>& in)
@@ -18,7 +18,7 @@ public:
         return alphabet;
     }
 
-private:
+ private:
     std::vector<Elem> alphabet;
 };
 

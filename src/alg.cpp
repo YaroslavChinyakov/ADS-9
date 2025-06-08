@@ -1,60 +1,57 @@
 // Copyright 2022 NNTU-CS
-#include  <iostream>
-#include  <fstream>
-#include  <locale>
-#include  <cstdlib>
-#include  "tree.h"
-#include <cctype>
-#include <algorithm>
-#include <string>
-#include <vector>
-#include "bst.h"
+#include "tree.h"
+#include <stdexcept>
 
-void makeTree(BST<std::string>& tree, const char* filename) {
-    std::ifstream file(filename);
-    if (!file) {
-        std::cerr << "File error: " << filename << "\n";
+static void buildAll(const std::vector<char>& available,
+    std::vector<char>& path,
+    std::vector<std::vector<char>>& out) {
+    if (available.empty()) {
+        out.push_back(path);
         return;
     }
-
-    std::string word;
-    char ch;
-    while (file.get(ch)) {
-        if (std::isalpha(static_cast<unsigned char>(ch))) {
-            word += static_cast<char>(
-                std::tolower(static_cast<unsigned char>(ch)));
-        }
-        else {
-            if (!word.empty()) {
-                tree.insert(word);
-                word.clear();
-            }
-        }
-    }
-    if (!word.empty()) {
-        tree.insert(word);
+    for (size_t i = 0; i < available.size(); ++i) {
+        auto next = available;
+        char c = next[i];
+        next.erase(next.begin() + i);
+        path.push_back(c);
+        buildAll(next, path, out);
+        path.pop_back();
     }
 }
 
-void printFreq(BST<std::string>& tree) {
-    auto vec = tree.toVector();
-
-    std::sort(vec.begin(), vec.end(),
-        [](auto& a, auto& b) {
-            if (a.second != b.second)
-                return a.second > b.second;
-            return a.first < b.first;
-        });
-
-    std::ofstream fout("result/freq.txt");
-    if (!fout) {
-        std::cerr << "Cannot open result/freq.txt for writing\n";
-        return;
-    }
-
-    for (auto& p : vec) {
-        std::cout << p.first << " " << p.second << "\n";
-        fout << p.first << " " << p.second << "\n";
-    }
+std::vector<std::vector<PMTree::Elem>> getAllPerms(const PMTree& tree) {
+    std::vector<std::vector<char>> result;
+    std::vector<char> path;
+    buildAll(tree.getAlphabet(), path, result);
+    return result;
 }
 
+std::vector<PMTree::Elem> getPerm1(const PMTree& tree, int num) {
+    auto all = getAllPerms(tree);
+    if (num < 1 || num > static_cast<int>(all.size())) {
+        return {};
+    }
+    return all[num - 1];
+}
+
+std::vector<PMTree::Elem> getPerm2(const PMTree& tree, int num) {
+    const auto& A = tree.getAlphabet();
+    int n = static_cast<int>(A.size());
+    long long fact = 1;
+    for (int i = 2; i <= n; ++i) fact *= i;
+    if (num < 1 || num > fact) {
+        return {};
+    }
+    --num;
+    std::vector<char> available = A;
+    std::vector<char> result;
+    result.reserve(n);
+    for (int k = n; k >= 1; --k) {
+        fact /= k;
+        int idx = num / fact;
+        result.push_back(available[idx]);
+        available.erase(available.begin() + idx);
+        num %= fact;
+    }
+    return result;
+}
